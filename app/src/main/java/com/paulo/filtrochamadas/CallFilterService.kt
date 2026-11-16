@@ -33,6 +33,10 @@ class CallFilterService : CallScreeningService() {
             number.isNullOrBlank()
 
         val allowed = !hidden && isInContacts(number!!)
+        if (!allowed) {
+            BlockLog.add(this, if (hidden) null else number,
+                if (hidden) "Número oculto" else "Fora dos contatos")
+        }
         respondToCall(callDetails, if (allowed) allow() else block())
     }
 
