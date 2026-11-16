@@ -11,8 +11,8 @@ android {
         applicationId = "com.paulo.filtrochamadas"
         minSdk = 29          // ROLE_CALL_SCREENING exige Android 10+
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
     }
 
     buildTypes {
@@ -30,4 +30,9 @@ android {
     }
 }
 
-// Sem dependências externas de propósito: só APIs do framework Android.
+dependencies {
+    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+}

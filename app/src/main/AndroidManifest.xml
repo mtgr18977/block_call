@@ -4,9 +4,10 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
+        android:name=".App"
         android:allowBackup="false"
         android:label="Filtro de Chamadas"
-        android:theme="@android:style/Theme.DeviceDefault.DayNight">
+        android:theme="@style/Theme.App">
 
         <activity
             android:name=".MainActivity"
