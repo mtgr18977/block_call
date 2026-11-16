@@ -19,12 +19,12 @@ class CallFilterService : CallScreeningService() {
 
     override fun onScreenCall(callDetails: Call.Details) {
         if (callDetails.callDirection != Call.Details.DIRECTION_INCOMING) {
-            respondTo(callDetails, allow())
+            respondToCall(callDetails, allow())
             return
         }
 
         if (!Prefs.isEnabled(this) || !hasContactsPermission()) {
-            respondTo(callDetails, allow())
+            respondToCall(callDetails, allow())
             return
         }
 
@@ -33,7 +33,7 @@ class CallFilterService : CallScreeningService() {
             number.isNullOrBlank()
 
         val allowed = !hidden && isInContacts(number!!)
-        respondTo(callDetails, if (allowed) allow() else block())
+        respondToCall(callDetails, if (allowed) allow() else block())
     }
 
     private fun allow() = CallResponse.Builder().build()
