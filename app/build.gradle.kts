@@ -15,6 +15,17 @@ android {
         versionName = "1.1"
     }
 
+    // Chave de debug fixa no repositório: todo build sai com a mesma assinatura,
+    // então o APK novo instala por cima do antigo sem perder permissões nem a função de triagem.
+    signingConfigs {
+        getByName("debug") {
+            storeFile = rootProject.file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false

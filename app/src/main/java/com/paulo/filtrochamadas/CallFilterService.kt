@@ -19,7 +19,15 @@ import android.telecom.TelecomManager
  */
 class CallFilterService : CallScreeningService() {
 
+    override fun onCreate() {
+        super.onCreate()
+        Prefs.markServiceCreated(this)
+    }
+
     override fun onScreenCall(callDetails: Call.Details) {
+        // Diagnóstico: registra que o sistema nos chamou (ligação recebida ou feita).
+        Prefs.markCallScreened(this)
+
         if (callDetails.callDirection != Call.Details.DIRECTION_INCOMING) {
             respondToCall(callDetails, allow())
             return

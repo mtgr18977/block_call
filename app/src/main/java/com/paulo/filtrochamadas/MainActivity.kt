@@ -132,6 +132,12 @@ class MainActivity : AppCompatActivity() {
         btnContacts.isEnabled = !hasContacts
         btnRole.isEnabled = hasContacts && !hasRole
 
+        // Diagnóstico: o sistema chegou a chamar o serviço?
+        fun fmt(t: Long) = if (t == 0L) "nunca" else dateFmt.format(Date(t))
+        findViewById<TextView>(R.id.diagText).text =
+            "Diagnóstico · serviço iniciado pelo sistema: ${fmt(Prefs.lastServiceCreated(this))}" +
+                " · última ligação analisada: ${fmt(Prefs.lastCallScreened(this))}"
+
         // Histórico
         val all = BlockLog.read(this)
         val today = all.filter { it.time >= startOfToday() }
