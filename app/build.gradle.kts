@@ -32,6 +32,13 @@ android {
         }
     }
 
+    // Relatório de lint em texto, pra ler no log do CI. Não derruba o build.
+    lint {
+        abortOnError = false
+        textReport = true
+        textOutput = file("build/reports/lint.txt")
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17

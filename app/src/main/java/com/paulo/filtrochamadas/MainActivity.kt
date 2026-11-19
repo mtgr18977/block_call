@@ -12,6 +12,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.materialswitch.MaterialSwitch
 import java.text.SimpleDateFormat
@@ -88,6 +89,8 @@ class MainActivity : AppCompatActivity() {
             refresh()
         }
 
+        findViewById<MaterialButton>(R.id.btnDiag).setOnClickListener { showDiagnostics() }
+
         filterGroup.check(R.id.btnAll)
         filterGroup.addOnButtonCheckedListener { _, _, isChecked -> if (isChecked) refresh() }
     }
@@ -95,6 +98,37 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         refresh()
+    }
+
+    private fun showDiagnostics() {
+        val boots = Diagnostics.boots(this)
+        val crashes = Diagnostics.crashes(this)
+        val sb = StringBuilder()
+
+        sb.append("Ligou o aparelho (hora do boot):\n")
+        if (boots.isEmpty()) sb.append("  sem dados\n")
+        boots.forEachIndexed { i, b ->
+            val tag = if (i == boots.lastIndex) " (primeira leitura)" else ""
+            sb.append("  • ${dateFmt.format(Date(b.bootTime))}$tag\n")
+        }
+        sb.append("\nCada linha acima é um boot do aparelho. Se houver mais de uma, o aparelho reiniciou ")
+        sb.append("entre elas. Compare o horário com o histórico de ligações.\n")
+
+        sb.append("\nFalhas do app (${crashes.size}):\n")
+        if (crashes.isEmpty()) sb.append("  nenhuma\n")
+        crashes.forEach { c ->
+            val head = c.substringBefore('\n').split("|")
+            val whenMs = head.getOrNull(0)?.toLongOrNull()
+            sb.append("\n— ${if (whenMs != null) dateFmt.format(Date(whenMs)) else "?"} · ${head.getOrNull(1)}\n")
+            sb.append(c.substringAfter('\n').take(700)).append('\n')
+        }
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Diagnóstico")
+            .setMessage(sb.toString())
+            .setPositiveButton("Fechar", null)
+            .setNeutralButton("Limpar") { _, _ -> Diagnostics.clear(this); refresh() }
+            .show()
     }
 
     private fun startOfToday(): Long = Calendar.getInstance().apply {
@@ -134,9 +168,12 @@ class MainActivity : AppCompatActivity() {
 
         // Diagnóstico: o sistema chegou a chamar o serviço?
         fun fmt(t: Long) = if (t == 0L) "nunca" else dateFmt.format(Date(t))
+        val boots = Diagnostics.boots(this)
+        val crashes = Diagnostics.crashes(this)
         findViewById<TextView>(R.id.diagText).text =
             "Diagnóstico · serviço iniciado pelo sistema: ${fmt(Prefs.lastServiceCreated(this))}" +
-                " · última ligação analisada: ${fmt(Prefs.lastCallScreened(this))}"
+                " · última ligação analisada: ${fmt(Prefs.lastCallScreened(this))}" +
+                "\nReinícios do aparelho vistos: ${maxOf(boots.size - 1, 0)} · Falhas do app: ${crashes.size}"
 
         // Histórico
         val all = BlockLog.read(this)

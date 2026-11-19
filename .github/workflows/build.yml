@@ -28,3 +28,11 @@ jobs:
         with:
           name: filtro-chamadas-debug-apk
           path: app/build/outputs/apk/debug/*.apk
+
+      # Análise estática (lint). Não bloqueia o APK; o resultado aparece no log.
+      - name: Lint
+        continue-on-error: true
+        run: |
+          gradle lintDebug --no-daemon
+          echo "=== RELATORIO LINT ==="
+          cat app/build/reports/lint.txt || echo "sem relatorio"

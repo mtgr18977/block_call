@@ -70,6 +70,13 @@
                             android:alpha="0.7"
                             android:textAppearance="?attr/textAppearanceBodySmall" />
 
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnDiag"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ver detalhes do diagnóstico" />
+
                         <com.google.android.material.materialswitch.MaterialSwitch
                             android:id="@+id/toggle"
                             android:layout_width="match_parent"
